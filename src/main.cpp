@@ -3,14 +3,14 @@
 
 BluetoothSerial SerialBT;
 
-char receivedChar;// received value will be stored as CHAR in this variable
-
 const int MR1_Pin = 15; //ESP32 pins (MR=Right Motor) (ML=Left Motor) (1=Forward) (2=Backward)
 const int MR2_Pin = 14; 
 const int ML1_Pin = 12;
 const int ML2_Pin = 13;
 const int Luces_Pin = 2;
+const int Buzzer_Pin = 4;
 
+char receivedChar;// received value will be stored as CHAR in this variable
 int Luces_bit = 0;
 
 //Control ruedas
@@ -32,6 +32,7 @@ void setup() {
   pinMode(ML1_Pin, OUTPUT);
   pinMode(ML2_Pin, OUTPUT);
   pinMode(Luces_Pin, OUTPUT);
+  pinMode(Buzzer_Pin, OUTPUT);
 }
 
 
@@ -85,6 +86,13 @@ void loop() {
       //}
     
     }
+
+    if (receivedChar == 'X') { 
+      digitalWrite(Buzzer_Pin, HIGH);
+      delay(500);
+      digitalWrite(Buzzer_Pin, LOW);      
+    }
+    
   }
 
   delay(20);

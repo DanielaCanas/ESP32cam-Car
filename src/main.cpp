@@ -13,6 +13,17 @@ const int Luces_Pin = 2;
 
 int Luces_bit = 0;
 
+//Control ruedas
+void Forward();
+void Backward();
+void Left();
+void Right();
+void Stop();
+void ForwardLeft();
+void ForwardRight();
+void BackwardLeft();
+void BackwardRight();
+
 void setup() {
   Serial.begin(115200);
   SerialBT.begin("CARRITO"); //You can change your Bluetooth device name
@@ -21,6 +32,62 @@ void setup() {
   pinMode(ML1_Pin, OUTPUT);
   pinMode(ML2_Pin, OUTPUT);
   pinMode(Luces_Pin, OUTPUT);
+}
+
+
+void loop() {
+  receivedChar =(char)SerialBT.read();
+
+  if (Serial.available()) {
+    SerialBT.write(Serial.read());
+  }
+
+  if (SerialBT.available()) {
+     
+    Serial.print ("Received:");//print on serial monitor
+    Serial.println(receivedChar);//print on serial monitor    
+    
+    if(receivedChar == 'F') {
+      Forward();
+    }
+    if(receivedChar == 'G') {
+      Backward(); 
+    }         
+     if(receivedChar == 'L') {
+      Left();
+    }        
+    if(receivedChar == 'R') {
+      Right(); 
+    }
+    if(receivedChar == 'Q') {
+      ForwardLeft();
+    }
+    if(receivedChar == 'E') {
+      ForwardRight();
+    }
+    if(receivedChar == 'Z') {
+      BackwardLeft();
+    }
+    if(receivedChar == 'C') {
+      BackwardRight();
+    }
+    if(receivedChar == 'S') {
+      Stop();
+    }
+    if(receivedChar == 'M') {
+    Luces_bit = (Luces_bit == 0 ? 1 : 0); // cambia el bit de luces cada vez que sea recibido el caracter M
+    digitalWrite(Luces_Pin, Luces_bit);
+      //if (Luces_bit) {
+       // Serial.print("Led On");
+      //}
+      //else {
+        //Serial.print("Led Off");
+      //}
+    
+    }
+  }
+
+  delay(20);
 }
 
 void Forward() {
@@ -78,59 +145,5 @@ void BackwardRight() {
   digitalWrite(MR2_Pin,LOW);
   digitalWrite(ML1_Pin,LOW); 
   digitalWrite(ML2_Pin,HIGH);
-}
-void loop() {
-  receivedChar =(char)SerialBT.read();
-
-  if (Serial.available()) {
-    SerialBT.write(Serial.read());
-  }
-
-  if (SerialBT.available()) {
-     
-    Serial.print ("Received:");//print on serial monitor
-    Serial.println(receivedChar);//print on serial monitor    
-    
-    if(receivedChar == 'F') {
-      Forward();
-    }
-    if(receivedChar == 'G') {
-      Backward(); 
-    }         
-     if(receivedChar == 'L') {
-      Left();
-    }        
-    if(receivedChar == 'R') {
-      Right(); 
-    }
-    if(receivedChar == 'Q') {
-      ForwardLeft();
-    }
-    if(receivedChar == 'E') {
-      ForwardRight();
-    }
-    if(receivedChar == 'Z') {
-      BackwardLeft();
-    }
-    if(receivedChar == 'C') {
-      BackwardRight();
-    }
-    if(receivedChar == 'S') {
-      Stop();
-    }
-    if(receivedChar == 'M') {
-    Luces_bit = (Luces_bit == 0 ? 1 : 0); // cambia el bit de luces cada vez que sea recibido el caracter M
-    digitalWrite(Luces_Pin, Luces_bit);
-      //if (Luces_bit) {
-       // Serial.print("Led On");
-      //}
-      //else {
-        //Serial.print("Led Off");
-      //}
-    
-    }
-  }
-
-  delay(20);
 }
  

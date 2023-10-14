@@ -9,9 +9,13 @@ const int ML1_Pin = 12;
 const int ML2_Pin = 13;
 const int Luces_Pin = 2;
 const int Buzzer_Pin = 4;
+const int TRIG_Pin = 16; // Pines del para el sensor ultrasonico
+const int ECHO_Pin = 0;
 
-char receivedChar;// received value will be stored as CHAR in this variable
-int Luces_bit = 0;
+char receivedChar;      // received value will be stored as CHAR in this variable
+int Luces_bit = 0;      //Estado de las luces
+float tiempo_espera;    //Salida sensor ultrasonico
+float distancia;        //Distancia medida por el ultrasonico
 
 //Control ruedas
 void Forward();
@@ -24,6 +28,9 @@ void ForwardRight();
 void BackwardLeft();
 void BackwardRight();
 
+void ultrasonico(); //Rutina de lectura del ultrasonico
+float timeToCm(float time);
+
 void setup() {
   Serial.begin(115200);
   SerialBT.begin("CARRITO"); //You can change your Bluetooth device name
@@ -33,11 +40,14 @@ void setup() {
   pinMode(ML2_Pin, OUTPUT);
   pinMode(Luces_Pin, OUTPUT);
   pinMode(Buzzer_Pin, OUTPUT);
+  pinMode(ECHO_Pin, OUTPUT);
+  pinMode(TRIG_Pin, OUTPUT);
 }
 
 
 void loop() {
   receivedChar =(char)SerialBT.read();
+  ultrasonico();
 
   if (Serial.available()) {
     SerialBT.write(Serial.read());
@@ -92,6 +102,8 @@ void loop() {
       delay(500);
       digitalWrite(Buzzer_Pin, LOW);      
     }
+
+
     
   }
 
@@ -153,5 +165,24 @@ void BackwardRight() {
   digitalWrite(MR2_Pin,LOW);
   digitalWrite(ML1_Pin,LOW); 
   digitalWrite(ML2_Pin,HIGH);
+}
+
+void ultrasonico() {
+  digitalWrite (TRIG_Pin, LOW); 
+  delayMicroseconds(2);
+  digitalWrite (TRIG_Pin, HIGH);
+  delayMicroseconds (10);
+  digitalWrite (TRIG_Pin, LOW); 
+
+  tiempo_espera = pulseIn(ECHO_Pin, HIGH);
+
+  distancia = timeToCm(tiempo_espera);
+
+  SerialBT.print('D');  
+  SerialBT.println(distancia);  
+}
+
+float timeToCm(float time) {
+  return (time / 2.0) / 29.15;
 }
  
